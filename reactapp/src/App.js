@@ -1,25 +1,39 @@
-import logo from './logo.svg';
+import React from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+import TaskList from './components/TaskList';
 import './App.css';
 
-function App() {
+const App = () => {
+  const {
+    isAuthenticated,
+    loginWithRedirect,
+    logout,
+    user,
+    isLoading
+  } = useAuth0();
+
+  if (isLoading) return <div>Loading...</div>;
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <header>
+        <h1>Task Management App</h1>
+        {isAuthenticated ? (
+          <>
+            <button onClick={() => logout({ returnTo: window.location.origin })}>
+              Logout
+            </button>
+            <p>Welcome, {user.name}!</p>
+            <TaskList />
+          </>
+        ) : (
+          <>
+            <button onClick={loginWithRedirect}>Log In</button>
+          </>
+        )}
       </header>
     </div>
   );
-}
+};
 
 export default App;
